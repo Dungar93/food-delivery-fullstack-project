@@ -8,11 +8,13 @@ import ContactPage from './pages/ContactPage/ContactPage'
 import AboutPage from './pages/AboutPage/AboutPage'
 import Login from './components/Login/Login'
 import SignUp from './components/SignUp/SignUp'
+import ScrollToTop from './components/ScrollToTop/ScrollToTop'
+
 
 const App = () => {
   return (
     <>
-      
+      <ScrollToTop />
       <Routes>
       <Route path='/' element={<Home />} />
       <Route path='/contact' element={<ContactPage />} />
