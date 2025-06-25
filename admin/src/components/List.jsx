@@ -10,7 +10,7 @@ const List = () => {
   useEffect(() => {
     const fetchItems = async () => {
       try {
-        const response = await axios.get("http://localhost:4000/api/items");
+        const response = await axios.get("https://food-delivery-backend-xo2u.onrender.com/api/items");
         setItems(response.data);
       } catch (err) {
         console.error("error fetching items :", err);
@@ -26,7 +26,7 @@ const List = () => {
     if (!window.confirm("are you sure you want to delete this item?")) return;
 
     try {
-      await axios.delete(`http://localhost:4000/api/items/${itemId}`);
+      await axios.delete(`https://food-delivery-backend-xo2u.onrender.com/api/items/${itemId}`);
       setItems((prev) => prev.filter((item) => item._id !== itemId));
       console.log("deleted item id: ", itemId);
     } catch (err) {

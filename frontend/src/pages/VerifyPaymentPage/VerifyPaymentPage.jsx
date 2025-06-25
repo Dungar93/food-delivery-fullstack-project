@@ -30,7 +30,7 @@ const VerifyPaymentPage = () => {
 
     // STRIPE SUCCESS=TRUE
     axios
-      .get("http://localhost:4000/api/orders/confirm", {
+      .get("https://food-delivery-backend-xo2u.onrender.com/api/orders/confirm", {
         params: { session_id },
         headers: authHeaders,
       })

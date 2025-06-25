@@ -38,7 +38,7 @@ const Checkout = () => {
       if (paymentStatus === success && sessionId) {
         axios
           .post(
-            "http://localhost:4000/api/orders/confirm",
+            "https://food-delivery-backend-xo2u.onrender.com/api/orders/confirm",
             { sessionId },
             { headers: authHeaders }
           )
@@ -88,7 +88,7 @@ const Checkout = () => {
     try {
       if(formData.paymentMethod === 'online'){
         const {data} = await axios.post(
-          "http://localhost:4000/api/orders",
+          "https://food-delivery-backend-xo2u.onrender.com/api/orders",
           payload,
           {headers: authHeaders}
         )
@@ -97,7 +97,7 @@ const Checkout = () => {
       }
       else{       //cod
         const {data} = await axios.post(
-          "http://localhost:4000/api/orders",
+          "https://food-delivery-backend-xo2u.onrender.com/api/orders",
           payload,
           {headers: authHeaders}
         )

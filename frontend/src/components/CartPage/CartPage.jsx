@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useCart } from '../../CartContext/CartContext';
 import { FaMinus, FaPlus, FaTrash, FaTimes } from "react-icons/fa";
 
-const API_URL = 'http://localhost:4000';
+const API_URL = 'https://food-delivery-backend-xo2u.onrender.com';
 
 const CartPage = () => {
   const { cartItems, addToCart, removeFromCart, updateQuantity, totalAmount } = useCart();

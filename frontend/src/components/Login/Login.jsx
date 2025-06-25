@@ -12,7 +12,7 @@ import { iconClass, inputBase } from "../../assets/dummydata";
 import { Link } from "react-router-dom";
 import axios from "axios"; // ✅ FIXED
 
-const url = "http://localhost:4000";
+const url = "https://food-delivery-backend-xo2u.onrender.com";
 
 const Login = ({ onLoginSuccess, onClose }) => {
   const [showToast, setShowToast] = useState({

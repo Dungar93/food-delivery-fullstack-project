@@ -58,7 +58,7 @@ const AddItems = () => {
         payload.append(key, val);
       });
 
-      const res = await axios.post("http://localhost:4000/api/items", payload, {
+      const res = await axios.post("https://food-delivery-backend-xo2u.onrender.com/api/items", payload, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       setFormData({

@@ -19,7 +19,7 @@ const Order = () => {
     const fetchOrders = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:4000/api/orders/getall",
+          "https://food-delivery-backend-xo2u.onrender.com/api/orders/getall",
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -63,7 +63,7 @@ const Order = () => {
     try {
       const newStatus = statusKeyMap[newStatusKey] || newStatusKey; // convert to space string
 
-      await axios.put(`http://localhost:4000/api/orders/getall/${orderId}`, {
+      await axios.put(`https://food-delivery-backend-xo2u.onrender.com/api/orders/getall/${orderId}`, {
         status: newStatus,
       });
 
@@ -188,7 +188,7 @@ const Order = () => {
                               className="flex items-center gap-3 p-2 rounded-lg "
                             >
                               <img
-                                src={`http://localhost:4000${itm.item.imageUrl}`}
+                                src={`https://food-delivery-backend-xo2u.onrender.com${itm.item.imageUrl}`}
                                 alt={itm.item.name}
                                 className="w-12 h-12 object-contain rounded-md flex-shrink-0"
                               />

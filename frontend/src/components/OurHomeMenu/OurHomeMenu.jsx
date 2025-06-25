@@ -22,7 +22,7 @@ const OurHomeMenu = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:4000/api/items")
+      .get("https://food-delivery-backend-xo2u.onrender.com/api/items")
       .then((res) => {
         const grouped = res.data.reduce((acc, item) => {
           acc[item.category] = acc[item.category] || [];
