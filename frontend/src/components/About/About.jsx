@@ -10,7 +10,7 @@ const About = () => {
       className="min-h-screen bg-gradient-to-br from-[#1a120b] via-[#3c2a21] to-[#1a120b] text-amber-500
     overflow-hidden relative"
     >
-      <div className="absolute inset-0 opacity-10 mix-blend-sorf-light" />
+      <div className="absolute inset-0 opacity-10 mix-blend-soft-light" />
       <motion.section
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}

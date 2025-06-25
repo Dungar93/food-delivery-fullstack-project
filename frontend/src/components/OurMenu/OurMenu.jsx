@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React, { useState , useEffect} from "react";
 import { useCart } from "../../CartContext/CartContext";
 import { dummyMenuData } from "../../assets/OmDD";
 import { FaMinus,FaPlus } from "react-icons/fa";
 import './OurMenu.css'
+import axios from 'axios'
+
 
 const categories = [
   "Breakfast",
@@ -15,11 +17,36 @@ const categories = [
 ];
 
 const OurMenu = () => {
+const [activeCategory, setActiveCategory] = useState(categories[0]);
+  const { cartItems, addToCart, removeFromCart, updateQuantity } = useCart();
+  const [menuData, setMenuData] = useState({});
 
-  const [activeCategory, setActiveCategory] = useState(categories[0]);
-    const { cartItems, addToCart, removeFromCart } = useCart();
-    const displayItems = (dummyMenuData[activeCategory] || []).slice(0, 12);
-    const getQuantity = (id) => cartItems.find((i) => i.id === id)?.quantity || 0;
+  useEffect(() => {
+  const fetchMenu = async () => {
+    try {
+      const res = await axios.get('http://localhost:4000/api/items');
+
+      const byCategory = res.data.reduce((acc, item) => {
+        const cat = item.category || 'Uncategorized';
+        acc[cat] = acc[cat] || [];
+        acc[cat].push(item);
+        return acc;
+      }, {});
+
+      setMenuData(byCategory);
+    } catch (err) {
+      console.error('Failed to load menu items:', err);
+    }
+  };
+
+  fetchMenu();
+}, []);
+
+   const getCartEntry = (id) => cartItems.find((ci) => ci.item._id === id);
+  const getQuantity = (id) => getCartEntry(id)?.quantity || 0;
+
+  //items to display
+  const displayItems = (menuData[activeCategory] ?? []).slice(0,12)
 
   return (
       <div className="bg-gradient-to-br from-[#1a120b] via-[#2a1e14] to-[#1a120b] min-h-screen py-16 px-4 sm:px-6 lg:px-8">
@@ -51,15 +78,18 @@ const OurMenu = () => {
   
           <div className="grid gap-10 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 px-2 sm:px-4">
             {displayItems.map((item, i) => {
-              const quantity = getQuantity(item.id);
+
+              const cardEntry = getCartEntry(item._id)
+
+              const quantity = cardEntry?.quantity || 0;
               return (
                 <div
-                  key={item.id}
+                  key={item._id}
                   className="-mt-4 group bg-[#2b1a12] rounded-3xl overflow-hidden border border-amber-800/30 shadow-lg shadow-black/20 transition-transform duration-300 hover:scale-105"
                 >
                   <div className="mb-1 h-44 flex justify-center items-center bg-[#3a2418] rounded-t-3xl overflow-hidden">
                     <img
-                      src={item.image}
+                      src={item.imageUrl || item.image}
                       alt={item.name}
                       className="h-full object-contain mt-3 mb-3 transition-transform duration-300 group-hover:scale-105 drop-shadow-[0_4px_6px_rgba(0,0,0,0.3)]"
                     />
@@ -78,7 +108,7 @@ const OurMenu = () => {
                       <div className="flex justify-between items-center">
                         <div className="bg-amber-100/10 backdrop-blur-sm px-3 py-1 rounded-2xl shadow-lg inline-block">
                           <span className="text-xl font-bold text-amber-300 font-dancingscript">
-                            ₹{item.price}
+                            ₹{Number(item.price).toFixed(2)}
                           </span>
                         </div>
   
@@ -89,8 +119,8 @@ const OurMenu = () => {
                                 className="w-8 h-8 rounded-full bg-amber-900/40 flex items-center justify-center hover:bg-amber-800/50 transition-colors"
                                 onClick={() =>
                                   quantity > 1
-                                    ? addToCart(item, quantity - 1)
-                                    : removeFromCart(item.id)
+                                    ? updateQuantity(cardEntry._id, quantity - 1)
+                                    : removeFromCart(cardEntry._id)
                                 }
                               >
                                 <FaMinus className="text-amber-100" />
@@ -100,7 +130,7 @@ const OurMenu = () => {
                               </span>
                               <button
                                 className="w-8 h-8 rounded-full bg-amber-900/40 flex items-center justify-center hover:bg-amber-800/50 transition-colors"
-                                onClick={() => addToCart(item, quantity + 1)}
+                                onClick={() =>updateQuantity(cardEntry._id, quantity + 1)}
                               >
                                 <FaPlus className="text-amber-100" />
                               </button>
