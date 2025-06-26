@@ -34,7 +34,8 @@ export const createItem = async (req,res,next) => {
 export const getItem = async (_req,res,next) => {
     try {
         const items = await itemModal.find().sort({createdAt : -1})
-        const host = `${_req.protocol}://${_req.get('host')}`;
+        const host = `https://${_req.get('host')}`;
+
 
         const withFullUrl = items.map(i => ({
             ...i.toObject(),
