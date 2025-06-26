@@ -22,25 +22,35 @@ const MyOrder = () => {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const response = await axios.get("https://food-delivery-backend-xo2u.onrender.com/api/orders", {
-          params: { email: user?.email },
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
-          },
-        });
+        const response = await axios.get(
+          "https://food-delivery-backend-xo2u.onrender.com/api/orders",
+          {
+            params: { email: user?.email },
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+            },
+          }
+        );
 
         // format data
         const formattedOrders = response.data.map((order) => ({
           ...order,
           items:
-            order.items?.map((entry) => ({
-              _id: entry._id,
-              item: {
-                ...entry.item,
-                imageUrl: entry.item.imageUrl,
-              },
-              quantity: entry.quantity,
-            })) || [],
+            order.items
+              ?.map((entry) => {
+                if (!entry || !entry.item) return null;
+
+                return {
+                  _id: entry._id,
+                  item: {
+                    ...entry.item,
+                    imageUrl: entry.item.imageUrl,
+                  },
+                  quantity: entry.quantity,
+                };
+              })
+              .filter(Boolean) || [],
+
           createdAt: new Date(order.createdAt).toLocaleDateString("en-IN", {
             year: "numeric",
             month: "long",
@@ -234,29 +244,31 @@ const MyOrder = () => {
 
                       <td className="p-4">
                         <div className="space-y-2">
-                          {order.items.map((item, index) => (
-                            <div
-                              key={`${order._id}-${index}`}
-                              className="flex items-center gap-3 p-2 bg-[#3a2b2b]/50 rounded-lg"
-                            >
-                              <img
-                                src={`https://food-delivery-backend-xo2u.onrender.com${item.item.imageUrl}`}
-                                alt={item.item.name}
-                                className="w-10 h-10 object-cover rounded-lg"
-                              />
+                          {order.items
+                            .filter((item) => item && item.item) // ensure item and item.item exist
+                            .map((item, index) => (
+                              <div
+                                key={`${order._id}-${index}`}
+                                className="flex items-center gap-3 p-2 bg-[#3a2b2b]/50 rounded-lg"
+                              >
+                                <img
+                                  src={`https://food-delivery-backend-xo2u.onrender.com${item.item.imageUrl}`}
+                                  alt={item.item.name}
+                                  className="w-10 h-10 object-cover rounded-lg"
+                                />
 
-                              <div className="flex-1">
-                                <span className="text-amber-100/80 text-sm block">
-                                  {item.item.name}
-                                </span>
-                                <div className="flex items-center gap-2 text-xs text-amber-400/60 ">
-                                  <span>₹{item.item.price}</span>
-                                  <span className=" mx-1 ">&middot;</span>
-                                  <span>x{item.quantity}</span>
+                                <div className="flex-1">
+                                  <span className="text-amber-100/80 text-sm block">
+                                    {item.item.name}
+                                  </span>
+                                  <div className="flex items-center gap-2 text-xs text-amber-400/60 ">
+                                    <span>₹{item.item.price}</span>
+                                    <span className=" mx-1 ">&middot;</span>
+                                    <span>x{item.quantity}</span>
+                                  </div>
                                 </div>
                               </div>
-                            </div>
-                          ))}
+                            ))}
                         </div>
                       </td>
 
@@ -311,10 +323,10 @@ const MyOrder = () => {
             </table>
           </div>
 
-          {orders.length === 0  && (
+          {orders.length === 0 && (
             <div className=" text-center py-12 text-amber-100/60 text-xl">
-                No Orders Found
-                </div>
+              No Orders Found
+            </div>
           )}
         </div>
       </div>

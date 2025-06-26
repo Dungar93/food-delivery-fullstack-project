@@ -19,7 +19,7 @@ const cartReducer = (state, action) => {
 
     case "ADD_ITEM": {
       const { _id, item, quantity } = action.payload;
-      const exists = state.find((ci) => ci.id === _id);
+      const exists = state.find((ci) => ci._id === _id);
       if (exists) {
         return state.map((ci) =>
           ci._id === _id ? { ...ci, quantity: ci.quantity + quantity } : ci
@@ -68,7 +68,14 @@ export const CartProvider = ({ children }) => {
         withCredentials: true,
         headers: { Authorization: `Bearer ${token}` },
       })
-      .then((res) => dispatch({ type: "HYDRATE_CART", payload: res.data }))
+      .then((res) => {
+        const validItems = Array.isArray(res.data)
+          ? res.data.filter((entry) => entry && entry.item)
+          : [];
+
+        dispatch({ type: "HYDRATE_CART", payload: validItems });
+      })
+
       .catch((err) => {
         if (err.response?.status !== 401) console.error(err);
       });

@@ -86,32 +86,28 @@ const Checkout = () => {
     };
 
     try {
-      if(formData.paymentMethod === 'online'){
-        const {data} = await axios.post(
+      if (formData.paymentMethod === "online") {
+        const { data } = await axios.post(
           "https://food-delivery-backend-xo2u.onrender.com/api/orders",
           payload,
-          {headers: authHeaders}
-        )
+          { headers: authHeaders }
+        );
         window.location.href = data.checkoutUrl;
-
-      }
-      else{       //cod
-        const {data} = await axios.post(
+      } else {
+        //cod
+        const { data } = await axios.post(
           "https://food-delivery-backend-xo2u.onrender.com/api/orders",
           payload,
-          {headers: authHeaders}
-        )
+          { headers: authHeaders }
+        );
         clearCart();
         navigate("/myorder", { state: { order: data.order } });
       }
-    }
-    catch (err) {
-      console.error('Order submission error : ',err)
-      setError(err.response?.data?.message || 'Failed to submit order')
-    }
-    finally{
+    } catch (err) {
+      console.error("Order submission error : ", err);
+      setError(err.response?.data?.message || "Failed to submit order");
+    } finally {
       setLoading(false);
-
     }
   };
 
@@ -184,28 +180,39 @@ const Checkout = () => {
               <h3 className="text-lg font-semibold text-amber-100">
                 Your Order Items
               </h3>
-              {cartItems.map(({_id, item, quantity}) => (
-                <div key={_id} className="flex justify-between items-center bg-[#3a2b2b] p-3 rounded-lg">
-                  <div className="flex-1">
-                    <span className="text-amber-100">{item.name}</span>
-                    <span className="ml-2 text-amber-500/80">x{quantity}</span>
+              {cartItems
+                .filter((ci) => ci && ci._id && ci.item) // ensure _id and item exist
+                .map(({ _id, item, quantity }) => (
+                  <div
+                    key={_id}
+                    className="flex justify-between items-center bg-[#3a2b2b] p-3 rounded-lg"
+                  >
+                    <div className="flex-1">
+                      <span className="text-amber-100">{item.name}</span>
+                      <span className="ml-2 text-amber-500/80">
+                        x{quantity}
+                      </span>
+                    </div>
+                    <span className="text-amber-300">
+                      ₹{(item.price * quantity).toFixed(2)}
+                    </span>
                   </div>
-                  <span className="text-amber-300">
-                    ₹{(item.price * quantity).toFixed(2)}
-                  </span>
-
-                </div>
-              ))}
+                ))}
             </div>
 
-            <PaymentSummary totalAmount={totalAmount}/>
+            <PaymentSummary totalAmount={totalAmount} />
 
             {/*payment method*/}
             <div>
               <label className="block mb-2">Payment Method</label>
-              <select name="paymentMethod" value={formData.paymentMethod}
-              onChange={handleInputChange} required className="w-full bg-[#3a2b2b]/50 rounded-xl
-              px-4 py-3">
+              <select
+                name="paymentMethod"
+                value={formData.paymentMethod}
+                onChange={handleInputChange}
+                required
+                className="w-full bg-[#3a2b2b]/50 rounded-xl
+              px-4 py-3"
+              >
                 <option value="">Select Method</option>
                 <option value="cod">Cash on Delivery</option>
                 <option value="online">Online Payment</option>
@@ -214,11 +221,15 @@ const Checkout = () => {
 
             {error && <p className="text-red-400 mt-2">{error}</p>}
 
-            <button type="submit" disabled={loading} className="w-full bg-gradient-to-r from-red-600 to-amber-600
-            py-4 rounded-xl font-bold flex justify-center items-center">
-              <FaLock className="mr-2"/> {loading ? 'Processing...' : 'Complete Order'}
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-gradient-to-r from-red-600 to-amber-600
+            py-4 rounded-xl font-bold flex justify-center items-center"
+            >
+              <FaLock className="mr-2" />{" "}
+              {loading ? "Processing..." : "Complete Order"}
             </button>
-
           </div>
         </form>
       </div>
@@ -226,40 +237,43 @@ const Checkout = () => {
   );
 };
 
-
-const Input = ({label, name, type ='text',value, onChange}) => (
+const Input = ({ label, name, type = "text", value, onChange }) => (
   <div>
     <label className="block mb-1">{label}</label>
-    <input type={type} name={name} value={value} onChange={onChange} required
-    className="w-full bg-[#3a2b2b]/50 rounded-xl px-4 py-2"/>
+    <input
+      type={type}
+      name={name}
+      value={value}
+      onChange={onChange}
+      required
+      className="w-full bg-[#3a2b2b]/50 rounded-xl px-4 py-2"
+    />
   </div>
 );
 
-const PaymentSummary = ({totalAmount}) => {
-     const subtotal = Number(totalAmount.toFixed(2));
-    const tax = Number((subtotal * 0.05).toFixed(2));
-    const total = Number((subtotal+tax).toFixed(2))
+const PaymentSummary = ({ totalAmount }) => {
+  const subtotal = Number(totalAmount.toFixed(2));
+  const tax = Number((subtotal * 0.05).toFixed(2));
+  const total = Number((subtotal + tax).toFixed(2));
 
-    return(
-      <div className="space-y-2">
-        <div className="flex justify-between">
-          <span>Subtotal:</span>
-          <span>₹{subtotal.toFixed(2)}</span>
-        </div>
-
-        <div className="flex justify-between">
-          <span>Tax (5%):</span>
-          <span>₹{tax.toFixed(2)}</span>
-        </div>
-
-        <div className="flex justify-between">
-          <span>Total:</span>
-          <span>₹{total.toFixed(2)}</span>
-        </div>
-
+  return (
+    <div className="space-y-2">
+      <div className="flex justify-between">
+        <span>Subtotal:</span>
+        <span>₹{subtotal.toFixed(2)}</span>
       </div>
-    )
-}
 
+      <div className="flex justify-between">
+        <span>Tax (5%):</span>
+        <span>₹{tax.toFixed(2)}</span>
+      </div>
+
+      <div className="flex justify-between">
+        <span>Total:</span>
+        <span>₹{total.toFixed(2)}</span>
+      </div>
+    </div>
+  );
+};
 
 export default Checkout;
